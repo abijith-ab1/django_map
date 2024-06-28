@@ -1,0 +1,54 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load allauth account %}
+{% block head_title %}
+    {% trans "Sign In" %}
+{% endblock head_title %}
+{% block content %}
+    {% element h1 %}
+        {% trans "Sign In" %}
+    {% endelement %}
+    {% if not SOCIALACCOUNT_ONLY %}
+    <div class="container bg-light d-flex justify-content-center align-items-center pb-4 rounded" style="max-width: 100%;">
+        <div class="row w-100 justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mt-2">
+                {% setvar link %}
+                    <div class="mb-2"><a href="{{ signup_url }}" class="link-info link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"></div>
+                    {% endsetvar %}
+                    {% setvar end_link %}
+                    </a>
+                {% endsetvar %}
+                {% element p %}
+                    {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }}{% endblocktranslate %}
+                {% endelement %}
+                {% url 'account_login' as login_url %}
+                {% element form form=form method="post" action=login_url tags="entrance,login" %}
+                    {% slot body %}
+                        {% csrf_token %}
+                        {% element fields form=form unlabeled=True %}
+                        {% endelement %}
+                        {{ redirect_field }}
+                    {% endslot %}
+                    {% slot actions %}
+                        {% element button type="submit" tags="prominent,login" %}
+                            {% trans "Sign In" %}
+                        {% endelement %}
+                    {% endslot %}
+                {% endelement %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if LOGIN_BY_CODE_ENABLED %}
+        {% element hr %}
+        {% endelement %}
+        {% element h2 %}
+            {% element button href=request_login_code_url tags="prominent,login,secondary" %}
+                {% trans "Mail me a sign-in code" %}
+            {% endelement %}
+        {% endelement %}
+    {% endif %}
+    {% if SOCIALACCOUNT_ENABLED %}
+        {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+    {% endif %}
+{% endblock content %}

@@ -1,0 +1,59 @@
+<!-- maps.html -->
+{% extends "index.html" %}
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        {% if m %}
+        <div class="col-md-10 offset-md-1">
+            {{ m|safe }}
+        </div>
+        {% elif not m %}
+        <div class="col-md-10 offset-md-1">
+            <div id="map" style="height: 400px; width: 100%;"></div>
+            <div id="locationError" class="alert alert-danger mt-3 d-none" role="alert">
+                Please allow your location to get the current position.
+            </div>
+        </div>
+        {% else %}
+        <div class="col-md-12">
+            <div class="alert alert-info text-center fw-bolder fs-2" role="alert">
+                No search history available.
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Function to initialize the map
+    function initMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var lat = position.coords.latitude;
+                var lon = position.coords.longitude;
+                var userLocation = { lat: lat, lng: lon };
+
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 14,
+                    center: userLocation
+                });
+
+                var marker = new google.maps.Marker({
+                    position: userLocation,
+                    map: map
+                });
+            }, function(error) {
+                console.error("Error getting location: " + error.message);
+                document.getElementById('locationError').classList.remove('d-none');
+                document.getElementById('locationError').textContent = "Error getting location: " + error.message;
+            });
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+            document.getElementById('locationError').classList.remove('d-none');
+            document.getElementById('locationError').textContent = "Geolocation is not supported by this browser.";
+        }
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&callback=initMap" async defer></script>
+{% endblock content %}

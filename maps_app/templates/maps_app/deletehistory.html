@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Search History</h2>
+    <div class="row">
+        {% if history %}
+            {% for item in history %}
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.location_name }}</h5>
+                            <p class="card-text">
+                                <small class="text-muted">Searched at: {{ item.searched_at|date:"M d, Y" }}</small>
+                            </p>
+                            <a href="{% url 'delete_history' item.id %}" class="btn btn-sm btn-outline-danger mt-2 ml-2">
+                                Delete <i class="bi bi-trash3"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-md-12">
+                <div class="alert alert-info text-center fw-bolder fs-2" role="alert">
+                    No search history available.
+                </div>
+            </div>
+        {% endif %}
+    </div>                    
+</div>
+{% endblock %}
